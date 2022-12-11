@@ -340,1408 +340,167 @@ bool unetbootin::ubninitialize(QList<QPair<QString, QString> > oppairs)
 				}
 			}
 		}
-		else if (pfirst.contains("isofile", Qt::CaseInsensitive))
+		else if (pfirst.contains("architecture", Qt::CaseInsensitive))
 		{
-			this->diskimagetypeselect->setCurrentIndex(diskimagetypeselect->findText(tr("ISO")));
-			this->FloppyPath->setText(psecond);
-            this->radioFloppy->setChecked(true);
+			int archidx = this->archselect->findText(psecond, Qt::MatchFixedString);
+			if (archidx != -1)
+				this->archselect->setCurrentIndex(archidx);
 		}
-		else if (pfirst.contains("imgfile", Qt::CaseInsensitive))
+		else if (pfirst.contains("desktop", Qt::CaseInsensitive))
 		{
-			this->diskimagetypeselect->setCurrentIndex(diskimagetypeselect->findText(tr("Floppy")));
-			this->FloppyPath->setText(psecond);
-            this->radioFloppy->setChecked(true);
+			int deskidx = this->desktopselect->findText(psecond, Qt::MatchFixedString);
+			if (deskidx != -1)
+				this->desktopselect->setCurrentIndex(deskidx);
 		}
-		else if (pfirst.contains("kernelfile", Qt::CaseInsensitive))
+		else if (pfirst.contains("type", Qt::CaseInsensitive))
 		{
-			this->KernelPath->setText(psecond);
+			int typeidx = this->typeselect->findText(psecond, Qt::MatchFixedString);
+			if (typeidx != -1)
+				this->typeselect->setCurrentIndex(typeidx);
 		}
-		else if (pfirst.contains("initrdfile", Qt::CaseInsensitive))
+		else if (pfirst.contains("label", Qt::CaseInsensitive))
 		{
-			this->InitrdPath->setText(psecond);
+			this->label->setText(psecond);
 		}
-		else if (pfirst.contains("cfgfile", Qt::CaseInsensitive))
+		else if (pfirst.contains("kernel", Qt::CaseInsensitive))
 		{
-			QString cfgoptstxt = getcfgkernargs(psecond, "", QStringList(), QStringList());
-			if (cfgoptstxt.isEmpty())
-			{
-				cfgoptstxt = getgrubcfgargs(psecond);
-			}
-			this->OptionEnter->setText(cfgoptstxt);
+			this->kernel->setText(psecond);
 		}
-		else if (pfirst.contains("kernelopts", Qt::CaseInsensitive))
+		else if (pfirst.contains("initrd", Qt::CaseInsensitive))
 		{
-			this->OptionEnter->setText(psecond);
+			this->initrd->setText(psecond);
 		}
-		else if (pfirst.contains("installtype", Qt::CaseInsensitive))
+		else if (pfirst.contains("options", Qt::CaseInsensitive))
 		{
-			if (psecond.contains("Hard", Qt::CaseInsensitive) || psecond.contains("HDD", Qt::CaseInsensitive))
-				this->typeselect->setCurrentIndex(this->typeselect->findText(tr("Hard Disk")));
-			else
-				this->typeselect->setCurrentIndex(this->typeselect->findText(tr("USB Drive")));
+			this->options->setText(psecond);
 		}
-		else if (pfirst.contains("targetdrive", Qt::CaseInsensitive))
+		else if (pfirst.contains("diskimage", Qt::CaseInsensitive))
 		{
-#ifdef Q_OS_WIN32
-			if (!psecond.endsWith('\\'))
-			{
-				psecond = psecond + '\\';
-			}
-#endif
-			int driveidx = this->driveselect->findText(psecond, Qt::MatchFixedString);
-			if (driveidx != -1)
-			{
-				this->driveselect->setCurrentIndex(driveidx);
-			}
-			else
-			{
-				this->driveselect->addItem(psecond);
-				this->driveselect->setCurrentIndex(this->driveselect->findText(psecond, Qt::MatchFixedString));
-			}
+			this->diskimage->setText(psecond);
 		}
-		else if (pfirst.contains("showcustom", Qt::CaseInsensitive))
+		else if (pfirst.contains("disklabel", Qt::CaseInsensitive))
 		{
-			if (psecond.contains('y', Qt::CaseInsensitive))
-			{
-				hideCustom = false;
-			}
+			this->disklabel->setText(psecond);
 		}
-		else if (pfirst.contains("nodistro", Qt::CaseInsensitive))
+		else if (pfirst.contains("partition", Qt::CaseInsensitive))
 		{
-			if (psecond.contains('y', Qt::CaseInsensitive))
-			{
-				radioDistro->setEnabled(false);
-				radioDistro->hide();
-				distroselect->setEnabled(false);
-				distroselect->hide();
-				dverselect->setEnabled(false);
-				dverselect->hide();
-				intromessage->move(intromessage->x(), intromessage->y()-20);
-				intromessage->resize(intromessage->width(), intromessage->height() + 20);
-			}
+			this->partition->setText(psecond);
 		}
-		else if (pfirst.contains("message", Qt::CaseInsensitive))
+		else if (pfirst.contains("filesystem", Qt::CaseInsensitive))
 		{
-			intromessage->setText(psecond);
+			int fsidx = this->filesystemselect->findText(psecond, Qt::MatchFixedString);
+			if (fsidx != -1)
+				this->filesystemselect->setCurrentIndex(fsidx);
 		}
-		else if (pfirst.contains("persistentspace", Qt::CaseInsensitive))
+		else if (pfirst.contains("size", Qt::CaseInsensitive))
 		{
-			bool isInt = false;
-			int numMBpersistentSpace = psecond.toInt(&isInt, 10);
-			if (isInt)
-				this->persistencevalue->setValue(numMBpersistentSpace);
+			this->size->setText(psecond);
 		}
-		else if (pfirst.contains("testingdownload", Qt::CaseInsensitive))
+		else if (pfirst.contains("mountpoint", Qt::CaseInsensitive))
 		{
-			if (psecond.contains('y', Qt::CaseInsensitive))
-			{
-				testingDownload = true;
-				exitOnCompletion = true;
-			}
+			this->mountpoint->setText(psecond);
 		}
-		else if (pfirst.contains("exitoncompletion", Qt::CaseInsensitive))
+		else if (pfirst.contains("bootloader", Qt::CaseInsensitive))
 		{
-			if (psecond.contains('y', Qt::CaseInsensitive))
-			{
-				exitOnCompletion = true;
-			}
+			int bootidx = this->bootloaderselect->findText(psecond, Qt::MatchFixedString);
+			if (bootidx != -1)
+				this->bootloaderselect->setCurrentIndex(bootidx);
 		}
-        else if (pfirst.contains("skipextraction", Qt::CaseInsensitive))
-        {
-            if (psecond.contains('y', Qt::CaseInsensitive))
-            {
-                skipExtraction = true;
-            }
-        }
-		else if (pfirst.contains("autoinstall", Qt::CaseInsensitive))
+		else if (pfirst.contains("bootloaderlocation", Qt::CaseInsensitive))
 		{
-			if (psecond.contains('y', Qt::CaseInsensitive))
-			{
-				exitOnCompletion = true;
-				overwriteall = true;
-				return true;
-			}
+			int bootlocidx = this->bootloaderlocationselect->findText(psecond, Qt::MatchFixedString);
+			if (bootlocidx != -1)
+				this->bootloaderlocationselect->setCurrentIndex(bootlocidx);
 		}
-		else if (pfirst.contains("action", Qt::CaseInsensitive))
+		else if (pfirst.contains("bootloaderdevice", Qt::CaseInsensitive))
 		{
-			if (psecond.contains("listdistros", Qt::CaseInsensitive))
-			{
-				QTextStream out(stdout);
-				for (int i = 1; i < this->distroselect->count(); ++i)
-				{
-					out << this->distroselect->itemText(i) << endl;
-				}
-				out.flush();
-				QApplication::exit();
-				exit(0);
-			}
-			else if (psecond.contains("listversions", Qt::CaseInsensitive))
-			{
-				QTextStream out(stdout);
-				for (int i = 0; i < this->dverselect->count(); ++i)
-				{
-					out << this->dverselect->itemText(i) << endl;
-				}
-				out.flush();
-				QApplication::exit();
-				exit(0);
-			}
+			this->bootloaderdevice->setText(psecond);
 		}
-	}
-	if (hideCustom)
-	{
-		radioManual->setEnabled(false);
-		radioManual->hide();
-		labelkernel->setEnabled(false);
-		labelkernel->hide();
-		labelinitrd->setEnabled(false);
-		labelinitrd->hide();
-		labeloption->setEnabled(false);
-		labeloption->hide();
-		KernelFileSelector->setEnabled(false);
-		KernelFileSelector->hide();
-		InitrdFileSelector->setEnabled(false);
-		InitrdFileSelector->hide();
-		CfgFileSelector->setEnabled(false);
-		CfgFileSelector->hide();
-		OptionEnter->setEnabled(false);
-		OptionEnter->hide();
-		KernelPath->setEnabled(false);
-		KernelPath->hide();
-		InitrdPath->setEnabled(false);
-		InitrdPath->hide();
-		KernelFileSelector->setEnabled(false);
-		KernelFileSelector->hide();
-		InitrdFileSelector->setEnabled(false);
-		InitrdFileSelector->hide();
-		radioLayout->removeItem(verticalSpacer);
-	}
-	return false;
-}
-
-void unetbootin::on_distroselect_currentIndexChanged(int distroselectIndex)
-{
-	dverselect->clear();
-	if (distroselectIndex == -1)
-		return;
-	QStringList dverL = distroselect->itemData(distroselectIndex).value<QStringList>();
-	for (int i = 2; i < dverL.size(); ++i)
-	{
-		if (!dverL.at(i).contains("someotherversion") && !dverL.at(i).isEmpty())
-			dverselect->addItem(dverL.at(i));
-	}
-	if (dverselect->findText(dverL.at(0)) != -1)
-		dverselect->setCurrentIndex(dverselect->findText(dverL.at(0)));
-	intromessage->setText(dverL.at(1));
-	radioDistro->setChecked(true);
-}
-
-void unetbootin::refreshdriveslist()
-{
-	driveselect->clear();
-	QStringList driveslist = listcurdrives();
-	for (int i = 0; i < driveslist.size(); ++i)
-	{
-	    driveselect->addItem(driveslist.at(i));
-	}
-}
-
-QStringList unetbootin::listcurdrives()
-{
-	return listsanedrives();
-}
-
-#ifdef Q_OS_MAC
-bool unetbootin::is_external_drive_macos(const QString &drivename)
-{
-    // drivename: disk3s1
-    QString device_info = callexternapp("diskutil", "info " + drivename);
-    if (device_info.contains("External"))
-    {
-        return true;
-    }
-    // stw "diskutil info" output changed; now look for line "Internal:    No"
-    QStringList infoLines = device_info.split("\n").filter("Internal");
-    for (int i = 0; i < infoLines.size(); i++) {
-        if (infoLines.at(i).contains("No"))
-            return true;
-    }
-
-    return false;
-}
-#endif
-
-QStringList unetbootin::matchinglist(QRegExp regex, QString text)
-{
-QStringList matchinglist;
-int pos = 0;
-
-while ((pos = regex.indexIn(text, pos)) != -1) {
-	matchinglist << regex.cap(1);
-	pos += regex.matchedLength();
-}
-
-return matchinglist;
-}
-
-QStringList unetbootin::listsanedrives()
-{
-	QStringList fulldrivelist;
-	if (typeselect->currentText() == tr("Hard Disk"))
-	{
-		fulldrivelist.append(QDir::toNativeSeparators(QDir::rootPath()).toUpper());
-	}
-	else if (typeselect->currentText() == tr("USB Drive"))
-	{
-		#ifdef Q_OS_WIN32
-		QFileInfoList extdrivesList = QDir::drives();
-		for (int i = 0; i < extdrivesList.size(); ++i)
+		else if (pfirst.contains("bootloaderoptions", Qt::CaseInsensitive))
 		{
-			if (QDir::toNativeSeparators(extdrivesList.at(i).path().toUpper()) != QDir::toNativeSeparators(QDir::rootPath().toUpper()) && !QDir::toNativeSeparators(extdrivesList.at(i).path().toUpper()).contains("A:") && !QDir::toNativeSeparators(extdrivesList.at(i).path().toUpper()).contains("B:"))
-			{
-				if (GetDriveType(LPWSTR(extdrivesList.at(i).path().toUpper().utf16())) == 2)
-				{
-					fulldrivelist.append(QDir::toNativeSeparators(extdrivesList.at(i).path().toUpper()));
-				}
-			}
+			this->bootloaderoptions->setText(psecond);
 		}
-		#endif
-				#ifdef Q_OS_LINUX
-				QDir devlstdir("/dev/disk/by-id/");
-				QFileInfoList usbfileinfoL = devlstdir.entryInfoList(QDir::NoDotAndDotDot|QDir::Files);
-				for (int i = 0; i < usbfileinfoL.size(); ++i)
-				{
-//                    if (usbfileinfoL.at(i).contains(QRegExp("^usb-\\S{1,}-part\\d{1,}$")))
-//                    {
-//                        fulldrivelist.append(usbfileinfoL.at(i).canonicalFilePath());
-//                    }
-                    if (usbfileinfoL.at(i).fileName().contains(QRegExp("^usb-\\S{1,}$")) ||
-                        usbfileinfoL.at(i).fileName().contains(QRegExp("^mmc-\\S{1,}$")))
-                    {
-						if (!volidcommand.isEmpty())
-						{
-							if (QString(callexternapp(volidcommand, QString("-t %2").arg(usbfileinfoL.at(i).canonicalFilePath()))).contains(QRegExp("(vfat|ext2|ext3|ext4)")))
-								fulldrivelist.append(usbfileinfoL.at(i).canonicalFilePath());
-						}
-						else
-						{
-							QString tstrblk = QString(callexternapp(blkidcommand, QString("-s TYPE %2").arg(usbfileinfoL.at(i).canonicalFilePath())));
-							if (tstrblk.contains('='))
-							{
-								if (tstrblk.section('=', -1, -1).remove('"').contains(QRegExp("(vfat|ext2|ext3|ext4)")))
-									fulldrivelist.append(usbfileinfoL.at(i).canonicalFilePath());
-							}
-						}
-					}
-				}
-				/*
-				QString fdisklusbdevsS = callexternapp(fdiskcommand, "-l");
-				QStringList usbdevsL = QString(fdisklusbdevsS).split("\n").filter(QRegExp("\\.{0,}FAT|Disk\\.{0,}")).join("\n").split(" ").join("\n").split("\t").join("\n").split("\n").filter("/dev/");
-		for (int i = 0; i < usbdevsL.size(); ++i)
+		else if (pfirst.contains("bootloaderconfig", Qt::CaseInsensitive))
 		{
-			if (usbdevsL.at(i).contains(":"))
-			{
-				if (!QString(callexternapp(volidcommand, QString("-t %2").arg(QString(usbdevsL.at(i)).remove(":")))).contains("vfat"))
-					continue;
-			}
-			fulldrivelist.append(QString(usbdevsL.at(i)).remove(":"));
-				}
-				*/
-		#endif
-#ifdef Q_OS_MAC
-QString systemprofilertext = callexternapp("system_profiler", "SPStorageDataType");
-QRegExp filesystemregex("File System: (.+)\\n");
-QRegExp drivenameregex("BSD Name: (.+)\\n");
-filesystemregex.setMinimal(true);
-drivenameregex.setMinimal(true);
-
-QStringList filesystemlist = matchinglist(filesystemregex, systemprofilertext);
-QStringList drivenamelist = matchinglist(drivenameregex, systemprofilertext);
-
-QRegExp fatfilesystems("FAT|Microsoft");
-
-for (int i = 0; i < filesystemlist.size(); ++i)
-{
-	if ((fatfilesystems.indexIn(filesystemlist.at(i),0) != -1) && is_external_drive_macos(drivenamelist.at(i))) {
-		fulldrivelist.append("/dev/"+drivenamelist.at(i));
-	}
-}
-#endif
-	}
-	return fulldrivelist;
-}
-
-
-QStringList unetbootin::listalldrives()
-{
-	QStringList fulldrivelist;
-	#ifdef Q_OS_WIN32
-	QFileInfoList extdrivesList = QDir::drives();
-	for (int i = 0; i < extdrivesList.size(); ++i)
-	{
-		fulldrivelist.append(QDir::toNativeSeparators(extdrivesList.at(i).path().toUpper()));
-	}
-	#endif
-	#ifdef Q_OS_LINUX
-		QString fdisklusbdevsS = callexternapp(fdiskcommand, "-l");
-		QString dflusbdevsS = callexternapp(dfcommand, "");
-		fulldrivelist = QString(dflusbdevsS).split(" ").join("\n").split("\t").join("\n").split("\n").filter("/dev/");
-		QStringList fulldrivelist2 = QString(fdisklusbdevsS).split(" ").join("\n").split("\t").join("\n").split("\n").filter("/dev/").replaceInStrings(":", "");
-		for (int i = 0; i < fulldrivelist2.size(); ++i)
-		{
-			if (!fulldrivelist.contains(fulldrivelist2.at(i)))
-				fulldrivelist.append(fulldrivelist2.at(i));
+			this->bootloaderconfig->setText(psecond);
 		}
-	#endif
-#ifdef Q_OS_MAC
-		return listsanedrives();
-#endif
-	return fulldrivelist;
-}
-
-void unetbootin::on_typeselect_currentIndexChanged(int)
-{
-	refreshdriveslist();
-}
-
-void unetbootin::on_dverselect_currentIndexChanged(int)
-{
-	radioDistro->setChecked(true);
-}
-
-void unetbootin::on_diskimagetypeselect_currentIndexChanged(int)
-{
-	radioFloppy->setChecked(true);
-}
-
-void unetbootin::on_FloppyFileSelector_clicked()
-{
-    QString nameFloppy = QDir::toNativeSeparators(QFileDialog::getOpenFileName(this, tr("Open Disk Image File"), QDir::homePath(), tr("All Files") + " (*);;" + tr("ISO") + " (*.iso);;" + tr("Floppy") + " (*.img)", 0
-    #if (QT_VERSION >= QT_VERSION_CHECK(4, 5, 0))
-    , QFileDialog::ReadOnly
-    #endif
-    ));
-	if (QFileInfo(nameFloppy).completeSuffix().contains("iso", Qt::CaseInsensitive))
-	{
-		if (diskimagetypeselect->findText(tr("ISO")) != -1)
-			diskimagetypeselect->setCurrentIndex(diskimagetypeselect->findText(tr("ISO")));
-	}
-	if (QFileInfo(nameFloppy).completeSuffix().contains("img", Qt::CaseInsensitive) || QFileInfo(nameFloppy).completeSuffix().contains("flp", Qt::CaseInsensitive))
-	{
-		if (diskimagetypeselect->findText(tr("Floppy")) != -1)
-			diskimagetypeselect->setCurrentIndex(diskimagetypeselect->findText(tr("Floppy")));
-	}
-	FloppyPath->clear();
-	FloppyPath->insert(nameFloppy);
-	radioFloppy->setChecked(true);
-}
-
-void unetbootin::on_KernelFileSelector_clicked()
-{
-    QString nameKernel = QDir::toNativeSeparators(QFileDialog::getOpenFileName(this, tr("Open Kernel File"), QDir::homePath(), tr("All Files (*)"), 0
-    #if (QT_VERSION >= QT_VERSION_CHECK(4, 5, 0))
-    , QFileDialog::ReadOnly
-    #endif
-    ));
-	KernelPath->clear();
-	KernelPath->insert(nameKernel);
-	radioManual->setChecked(true);
-}
-
-void unetbootin::on_InitrdFileSelector_clicked()
-{
-    QString nameInitrd = QDir::toNativeSeparators(QFileDialog::getOpenFileName(this, tr("Open Initrd File"), QDir::homePath(), tr("All Files (*)"), 0
-    #if (QT_VERSION >= QT_VERSION_CHECK(4, 5, 0))
-    , QFileDialog::ReadOnly
-    #endif
-    ));
-	InitrdPath->clear();
-	InitrdPath->insert(nameInitrd);
-	radioManual->setChecked(true);
-}
-
-void unetbootin::on_CfgFileSelector_clicked()
-{
-    QString nameCfg = QFileDialog::getOpenFileName(this, tr("Open Bootloader Config File"), QDir::homePath(), tr("All Files (*)"), 0
-    #if (QT_VERSION >= QT_VERSION_CHECK(4, 5, 0))
-    , QFileDialog::ReadOnly
-    #endif
-    );
-	OptionEnter->clear();
-	QString cfgoptstxt = getcfgkernargs(nameCfg, "", QStringList(), QStringList());
-	if (cfgoptstxt.isEmpty())
-	{
-		cfgoptstxt = getgrubcfgargs(nameCfg);
-	}
-	OptionEnter->insert(cfgoptstxt);
-	radioManual->setChecked(true);
-}
-
-void unetbootin::on_cancelbutton_clicked()
-{
-	close();
-}
-
-void unetbootin::on_okbutton_clicked()
-{
-    if (typeselect->currentIndex() == typeselect->findText(tr("USB Drive")) && driveselect->currentText().isEmpty() && !testingDownload)
-	{
-		QMessageBox unotenoughinputmsgb;
-		unotenoughinputmsgb.setIcon(QMessageBox::Information);
-		unotenoughinputmsgb.setWindowTitle(tr("Insert a USB flash drive"));
-		unotenoughinputmsgb.setText(tr("No USB flash drives were found. If you have already inserted a USB drive, try reformatting it as FAT32."));
-		unotenoughinputmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (unotenoughinputmsgb.exec())
+		else if (pfirst.contains("bootloaderinstall", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderinstall->setText(psecond);
 		}
-		refreshdriveslist(); // stw give it a chance to detect a new drive
-	}
-#ifdef Q_OS_MAC
-    if (locatemountpoint(driveselect->currentText()) == "NOT MOUNTED" && !testingDownload)
-		callexternapp("diskutil", "mount "+driveselect->currentText());
-#endif
-	#ifdef Q_OS_LINUX
-	else if (typeselect->currentIndex() == typeselect->findText(tr("USB Drive")) && locatemountpoint(driveselect->currentText()) == "NOT MOUNTED")
-	{
-		QMessageBox merrordevnotmountedmsgbx;
-		merrordevnotmountedmsgbx.setIcon(QMessageBox::Warning);
-		merrordevnotmountedmsgbx.setWindowTitle(QString(tr("%1 not mounted")).arg(driveselect->currentText()));
-		merrordevnotmountedmsgbx.setText(QString(tr("You must first mount the USB drive %1 to a mountpoint. Most distributions will do this automatically after you remove and reinsert the USB drive.")).arg(driveselect->currentText()));
-		merrordevnotmountedmsgbx.setStandardButtons(QMessageBox::Ok);
-		switch (merrordevnotmountedmsgbx.exec())
+		else if (pfirst.contains("bootloaderconfiginstall", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderconfiginstall->setText(psecond);
 		}
-	}
-	#endif
-	else if (radioDistro->isChecked() && distroselect->currentIndex() == distroselect->findText(unetbootin::tr("== Select Distribution ==")))
-	{
-		QMessageBox dnotenoughinputmsgb;
-		dnotenoughinputmsgb.setIcon(QMessageBox::Information);
-		dnotenoughinputmsgb.setWindowTitle(tr("Select a distro"));
-		dnotenoughinputmsgb.setText(tr("You must select a distribution to load."));
-		dnotenoughinputmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (dnotenoughinputmsgb.exec())
+		else if (pfirst.contains("bootloaderconfiguninstall", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderconfiguninstall->setText(psecond);
 		}
-	}
-	else if (radioFloppy->isChecked() && FloppyPath->text().isEmpty())
-	{
-		QMessageBox fnotenoughinputmsgb;
-		fnotenoughinputmsgb.setIcon(QMessageBox::Information);
-		fnotenoughinputmsgb.setWindowTitle(tr("Select a disk image file"));
-		fnotenoughinputmsgb.setText(tr("You must select a disk image file to load."));
-		fnotenoughinputmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (fnotenoughinputmsgb.exec())
+		else if (pfirst.contains("bootloaderuninstall", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderuninstall->setText(psecond);
 		}
-	}
-	else if (radioManual->isChecked() && KernelPath->text().isEmpty())
-	{
-		QMessageBox knotenoughinputmsgb;
-		knotenoughinputmsgb.setIcon(QMessageBox::Information);
-		knotenoughinputmsgb.setWindowTitle(tr("Select a kernel and/or initrd file"));
-		knotenoughinputmsgb.setText(tr("You must select a kernel and/or initrd file to load."));
-		knotenoughinputmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (knotenoughinputmsgb.exec())
+		else if (pfirst.contains("bootloaderconfigoptions", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderconfigoptions->setText(psecond);
 		}
-	}
-	else if (radioFloppy->isChecked() && !QFile::exists(FloppyPath->text()) && !FloppyPath->text().startsWith("http://") && !FloppyPath->text().startsWith("ftp://"))
-	{
-		QMessageBox ffnotexistsmsgb;
-		ffnotexistsmsgb.setIcon(QMessageBox::Information);
-		ffnotexistsmsgb.setWindowTitle(tr("Diskimage file not found"));
-		ffnotexistsmsgb.setText(tr("The specified diskimage file %1 does not exist.").arg(FloppyPath->text()));
-		ffnotexistsmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (ffnotexistsmsgb.exec())
+		else if (pfirst.contains("bootloaderconfiginstalloptions", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderconfiginstalloptions->setText(psecond);
 		}
-	}
-	else if (radioManual->isChecked() && !QFile::exists(KernelPath->text()) && !KernelPath->text().startsWith("http://") && !KernelPath->text().startsWith("ftp://"))
-	{
-		QMessageBox kfnotexistsmsgb;
-		kfnotexistsmsgb.setIcon(QMessageBox::Information);
-		kfnotexistsmsgb.setWindowTitle(tr("Kernel file not found"));
-		kfnotexistsmsgb.setText(tr("The specified kernel file %1 does not exist.").arg(KernelPath->text()));
-		kfnotexistsmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (kfnotexistsmsgb.exec())
+		else if (pfirst.contains("bootloaderconfiguninstall options", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderconfiguninstalloptions->setText(psecond);
 		}
-	}
-	else if (radioManual->isChecked() && InitrdPath->text().trimmed() != "" && !QFile::exists(InitrdPath->text())  && !InitrdPath->text().startsWith("http://") && !InitrdPath->text().startsWith("ftp://"))
-	{
-		QMessageBox ifnotexistsmsgb;
-		ifnotexistsmsgb.setIcon(QMessageBox::Information);
-		ifnotexistsmsgb.setWindowTitle(tr("Initrd file not found"));
-		ifnotexistsmsgb.setText(tr("The specified initrd file %1 does not exist.").arg(InitrdPath->text()));
-		ifnotexistsmsgb.setStandardButtons(QMessageBox::Ok);
-		switch (ifnotexistsmsgb.exec())
+		else if (pfirst.contains("bootloaderuninstall options", Qt::CaseInsensitive))
 		{
-			case QMessageBox::Ok:
-				break;
-			default:
-				break;
+			this->bootloaderuninstalloptions->setText(psecond);
 		}
-	}
-	else
-	{
-		runinst();
-	}
-}
-
-void unetbootin::on_fexitbutton_clicked()
-{
-	close();
-}
-
-QString unetbootin::displayfisize(quint64 fisize)
-{
-	if (fisize < 10000)
-	{
-		return QString("%1 B").arg(fisize);
-	}
-	else if (fisize < 10240000)
-	{
-		return QString("%1 KB").arg(fisize / 1024);
-	}
-	else
-	{
-		return QString("%1 MB").arg(fisize / 1048576);
-	}
-}
-
-QPair<QPair<QStringList, QList<quint64> >, QStringList> unetbootin::listarchiveconts(QString archivefile)
-{
-	#ifdef Q_OS_WIN32
-	if (sevzcommand.isEmpty())
-	{
-		installsvzip();
-	}
-	randtmpfile tmplsF(ubntmpf, "ufl");
-	callexternapp(getenv("COMSPEC"), QString("/c \"\"%1\" -bd -slt l \"%2\" > \"%3\"\"").arg(sevzcommand).arg(QFileInfo(archivefile).absoluteFilePath()).arg(QFileInfo(tmplsF).absoluteFilePath()));
-	tmplsF.open(QIODevice::ReadOnly | QIODevice::Text);
-	QTextStream tmplsS(&tmplsF);
-	#endif
-	#ifdef Q_OS_UNIX
-    QString sevzlcommandout = callexternapp(sevzcommand, QString("-bd -slt l \"%1\"").arg(QFileInfo(archivefile).absoluteFilePath()));
-	QTextStream tmplsS(&sevzlcommandout);
-	#endif
-	QString tmplsL;
-	QStringList tmplsSLF;
-	QStringList tmplsSLD;
-	QList<quint64> tmplsSLFS;
-	QString tmplsN;
-	QString tmplsFS;
-	while (!tmplsS.atEnd())
-	{
-		tmplsL = tmplsS.readLine();
-		if (tmplsL.contains("Path = "))
+		else if (pfirst.contains("bootloaderinstall options", Qt::CaseInsensitive))
 		{
-			if (tmplsL.contains("Path = [BOOT]"))
-				continue;
-			if (tmplsL == QString("Path = %1").arg(QFileInfo(archivefile).absoluteFilePath()))
-				continue;
-			if (tmplsL == QString("Path = %1").arg(QDir::toNativeSeparators(QFileInfo(archivefile).absoluteFilePath())))
-				continue;
-			tmplsN = tmplsS.readLine();
-			if (tmplsN.contains("Folder = 1") || tmplsN.contains("Folder = +"))
-			{
-				tmplsSLD.append(tmplsL.remove("Path = "));
-			}
-			else
-			{
-				tmplsSLF.append(tmplsL.remove("Path = "));
-				tmplsFS = QString(tmplsS.readLine()).remove("Size = ").trimmed();
-				tmplsSLFS.append(tmplsFS.toULongLong());
-			}
+			this->bootloaderinstalloptions->setText(psecond);
 		}
-	}
-	#ifdef Q_OS_WIN32
-	tmplsF.close();
-	rmFile(tmplsF);
-	#endif
-	return qMakePair(qMakePair(tmplsSLF, tmplsSLFS), tmplsSLD);
-}
-
-bool unetbootin::overwritefileprompt(QString ovwfileloc)
-{
-	if (overwriteall)
-	{
-		rmFile(ovwfileloc);
-		return true;
-	}
-	QMessageBox overwritefilemsgbx;
-	overwritefilemsgbx.setIcon(QMessageBox::Warning);
-	overwritefilemsgbx.setWindowTitle(QString(tr("%1 exists, overwrite?")).arg(ovwfileloc));
-	overwritefilemsgbx.setText(QString(tr("The file %1 already exists. Press 'Yes to All' to overwrite it and not be prompted again, 'Yes' to overwrite files on an individual basis, and 'No' to retain your existing version. If in doubt, press 'Yes to All'.")).arg(ovwfileloc));
-	overwritefilemsgbx.setStandardButtons(QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No);
-	switch (overwritefilemsgbx.exec())
-	{
-		case QMessageBox::Yes:
+		else if (pfirst.contains("bootloaderuninstall options", Qt::CaseInsensitive))
 		{
-			rmFile(ovwfileloc);
-			return true;
+			this->bootloaderuninstalloptions->setText(psecond);
 		}
-		case QMessageBox::YesToAll:
+		else if (pfirst.contains("bootloaderconfiginstall options", Qt::CaseInsensitive))
 		{
-			rmFile(ovwfileloc);
-			overwriteall = true;
-			return true;
+			this->bootloaderconfiginstalloptions->setText(psecond);
 		}
-		case QMessageBox::No:
-			return false;
-		default:
-			return false;
-	}
-}
-
-bool unetbootin::ignoreoutofspaceprompt(QString destindir)
-{
-	QMessageBox overwritefilemsgbx;
-	overwritefilemsgbx.setIcon(QMessageBox::Warning);
-	overwritefilemsgbx.setWindowTitle(QString(tr("%1 is out of space, abort installation?")).arg(destindir));
-	overwritefilemsgbx.setText(QString(tr("The directory %1 is out of space. Press 'Yes' to abort installation, 'No' to ignore this error and attempt to continue installation, and 'No to All' to ignore all out-of-space errors.")).arg(destindir));
-	overwritefilemsgbx.setStandardButtons(QMessageBox::Yes | QMessageBox::NoToAll | QMessageBox::No);
-	switch (overwritefilemsgbx.exec())
-	{
-		case QMessageBox::Yes:
+		else if (pfirst.contains("bootloaderconfiguninstall options", Qt::CaseInsensitive))
 		{
-			QApplication::quit();
-			return false;
+			this->bootloaderconfiguninstalloptions->setText(psecond);
 		}
-		case QMessageBox::No:
+		else if (pfirst.contains("bootloaderuninstall options", Qt::CaseInsensitive))
 		{
-			return true;
+			this->bootloaderuninstalloptions->setText(psecond);
 		}
-		case QMessageBox::NoToAll:
+		else if (pfirst.contains("bootloaderinstall options", Qt::CaseInsensitive))
 		{
-			this->ignoreoutofspace = true;
-			return true;
+			this->bootloaderinstalloptions->setText(psecond);
 		}
-		default:
-			return true;
-	}
-}
-
-bool unetbootin::extractfile(QString filepath, QString destinfileL, QString archivefile)
-{
-	#ifdef Q_OS_UNIX
-	if (installType != tr("USB Drive") && filepath.contains("boot/grub")) // don't nuke grub config
-		return false;
-	#endif
-	QString destindir = QFileInfo(destinfileL).dir().absolutePath();
-	QString destinfilename = QString("%1/%2").arg(destindir).arg(QFileInfo(destinfileL).fileName());
-	QString filepathfilename = QString("%1/%2").arg(destindir).arg(QFileInfo(filepath).fileName());
-	if (QFile::exists(filepathfilename))
-	{
-		if (!overwritefileprompt(filepathfilename))
-			return false;
-	}
-	if (QFile::exists(destinfilename))
-	{
-		if (!overwritefileprompt(destinfilename))
-			return false;
-	}
-	#ifdef Q_OS_WIN32
-	if (sevzcommand.isEmpty())
-	{
-		installsvzip();
-	}
-	#endif
-	callexternapp(sevzcommand, QString("-bd  -aos -o\"%1\" e \"%2\" \"%3\"").arg(QDir::toNativeSeparators(destindir), QDir::toNativeSeparators(archivefile), QDir::toNativeSeparators(filepath)));
-	int retv;
-	if (QFileInfo(filepathfilename).absoluteFilePath() == QFileInfo(destinfilename).absoluteFilePath())
-	{
-		retv = true;
-	}
-	else
-	{
-		retv = QFile::rename(filepathfilename, destinfilename);
-	}
-	this->checkifoutofspace(destindir);
-	return retv;
-}
-
-bool unetbootin::checkifoutofspace(QString destindir)
-{
-	if  (ignoreoutofspace == true)
-		return false;
-	bool outofspace = false;
-	#ifdef Q_OS_UNIX
-	struct statfs diskstatS;
-	if (!statfs(QString(destindir+"/.").toLatin1(), &diskstatS))
-	{
-		if (diskstatS.f_bavail * diskstatS.f_bfree < 1024)
-			outofspace = true;
-	}
-	#endif
-	#ifdef Q_OS_WIN32
-	ULARGE_INTEGER FreeBytesAvailable;
-	ULARGE_INTEGER TotalNumberOfBytes;
-	ULARGE_INTEGER TotalNumberOfFreeBytes;
-	if (GetDiskFreeSpaceExA(destindir.toUtf8(), &FreeBytesAvailable, &TotalNumberOfBytes, &TotalNumberOfFreeBytes))
-	{
-		if (FreeBytesAvailable.QuadPart < 1024)
-			outofspace = true;
-	}
-	#endif
-	if (outofspace == true)
-	{
-		return !ignoreoutofspaceprompt(destindir);
-	}
-	return false;
-}
-
-QString unetbootin::locatekernel(QString archivefile, QPair<QStringList, QList<quint64> > archivefileconts)
-{
-	pdesc1->setText(tr("Locating kernel file in %1").arg(archivefile));
-	if (issalt) {
-		// The grub2 boot loader is return,
-		// it is prepended with a Linux header,
-		// so that syslinux can chainload to it.
-		// The embeded configuration file will find the correct prefix using the .live file at the root of the USB key.
-		return "boot/grub2-linux.img";
-	}
-	else
-	{
-        QStringList kernelnames = QStringList() << "vmlinuz" << "vmlinux" << "bzImage" << "kernel" << "sabayon" << "gentoo" << "linux26" << "linux24" << "bsd" << "unix" << "linux" << "rescue" << "xpud" << "bzI" << "kexec" << "vmlinuz.efi";
-	QStringList tnarchivefileconts;
-	QStringList narchivefileconts;
-	QString curarcitm;
-	for (int i = 0; i < archivefileconts.second.size(); ++i)
-	{
-//		curarcitm = archivefileconts.first.at(i).right(archivefileconts.first.at(i).size() - archivefileconts.first.at(i).lastIndexOf(QDir::toNativeSeparators("/")) - 1);
-//		if (curarcitm.contains("isolinux", Qt::CaseInsensitive) || curarcitm.contains("memtest", Qt::CaseInsensitive) || curarcitm.contains("system.map", Qt::CaseInsensitive) || curarcitm.contains(".efimg", Qt::CaseInsensitive) || curarcitm.contains(".jpg", Qt::CaseInsensitive) || curarcitm.contains(".png", Qt::CaseInsensitive) || curarcitm.contains(".pdf", Qt::CaseInsensitive) || curarcitm.contains(".txt", Qt::CaseInsensitive) || curarcitm.contains(".pcx", Qt::CaseInsensitive) || curarcitm.contains(".rle", Qt::CaseInsensitive) || curarcitm.contains(".fnt", Qt::CaseInsensitive) || curarcitm.contains(".msg", Qt::CaseInsensitive) || curarcitm.contains(".cat", Qt::CaseInsensitive) || curarcitm.contains(".tar", Qt::CaseInsensitive) || curarcitm.contains(".psd", Qt::CaseInsensitive) || curarcitm.contains(".xcf", Qt::CaseInsensitive) || curarcitm.contains(".bmp", Qt::CaseInsensitive) || curarcitm.contains(".svg", Qt::CaseInsensitive))
-//		{
-//			continue;
-//		}
-//		if (filteroutlist(curarcitm, ignoredtypesbothRL+ignoredtypeskernelRL).isEmpty())
-//		{
-//			continue;
-//		}
-		if (archivefileconts.second.at(i) > 614400 && archivefileconts.second.at(i) < 20971520) // between 600 KB and 20 MB
+		else if (pfirst.contains("bootloaderuninstall options", Qt::CaseInsensitive))
 		{
-			tnarchivefileconts.append(archivefileconts.first.at(i));
+			this->bootloaderuninstalloptions->setText(psecond);
 		}
-	}
-	narchivefileconts = filteroutlistL(tnarchivefileconts, ignoredtypesbothRL+ignoredtypeskernelRL);
-	for (int i = 0; i < kernelnames.size(); ++i)
-	{
-		for (int j = 0; j < narchivefileconts.size(); ++j)
+		else if (pfirst.contains("bootloaderconfiginstall options", Qt::CaseInsensitive))
 		{
-			if (narchivefileconts.at(j).right(narchivefileconts.at(j).size() - narchivefileconts.at(j).lastIndexOf(QDir::toNativeSeparators("/")) - 1).contains(kernelnames.at(i), Qt::CaseInsensitive))
-			{
-				return narchivefileconts.at(j);
-			}
+			this->bootloaderconfiginstalloptions->setText(psecond);
 		}
-	}
-	pdesc1->setText("");
-	return "";
-}
-}
-
-bool unetbootin::extractkernel(QString archivefile, QString kernoutputfile, QPair<QStringList, QList<quint64> > archivefileconts)
-{
-	QString kfloc = locatekernel(archivefile, archivefileconts);
-	if (kfloc == "")
-		return false;
-	pdesc1->setText(tr("Copying kernel file from %1").arg(kfloc));
-	return extractfile(kfloc, kernoutputfile, archivefile);
-}
-
-QString unetbootin::locateinitrd(QString archivefile, QPair<QStringList, QList<quint64> > archivefileconts)
-{
-	pdesc1->setText(tr("Locating initrd file in %1").arg(archivefile));
-	QStringList kernelnames = QStringList() << "initrd.img.gz" << "initrd.lz" << "initrd.igz" << "initrd.gz" << "initrd.xz" << "initrd.lzma" << "initrd.img" << "initramfs.gz" << "initramfs.img" << "initrd" << "initramfs" << "minirt" << "miniroot" << "sabayon.igz" << "gentoo.igz" << "archlive.img" << "rootfs.gz" << ".igz" << ".cgz" << ".img" << "rootfs" << "fs.gz" << "root.gz" << ".gz" << "initram" << "initr" << "init" << "ram" << ".lz" << ".lzma" << ".xz";
-	QStringList tnarchivefileconts;
-	QStringList narchivefileconts;
-	QString curarcitm;
-	for (int i = 0; i < archivefileconts.second.size(); ++i)
-	{
-		curarcitm = archivefileconts.first.at(i).right(archivefileconts.first.at(i).size() - archivefileconts.first.at(i).lastIndexOf(QDir::toNativeSeparators("/")) - 1);
-//		if (curarcitm.contains("isolinux", Qt::CaseInsensitive) || curarcitm.contains("memtest", Qt::CaseInsensitive) || curarcitm.contains("system.map", Qt::CaseInsensitive) || curarcitm.contains(".efimg", Qt::CaseInsensitive) || curarcitm.contains(".jpg", Qt::CaseInsensitive) || curarcitm.contains(".png", Qt::CaseInsensitive) || curarcitm.contains(".pdf", Qt::CaseInsensitive) || curarcitm.contains(".txt", Qt::CaseInsensitive) || curarcitm.contains(".pcx", Qt::CaseInsensitive) || curarcitm.contains(".rle", Qt::CaseInsensitive) || curarcitm.contains(".fnt", Qt::CaseInsensitive) || curarcitm.contains(".msg", Qt::CaseInsensitive) || curarcitm.contains(".cat", Qt::CaseInsensitive) || curarcitm.contains(".tar", Qt::CaseInsensitive) || curarcitm.contains(".psd", Qt::CaseInsensitive) || curarcitm.contains(".xcf", Qt::CaseInsensitive) || curarcitm.contains(".bmp", Qt::CaseInsensitive) || curarcitm.contains(".svg", Qt::CaseInsensitive))
-//		{
-//			continue;
-//		}
-//		if (filteroutlist(curarcitm, ignoredtypesbothRL+ignoredtypesinitrdRL).isEmpty())
-//		{
-//			continue;
-//		}
-        if (archivefileconts.second.at(i) >= 128000 && archivefileconts.second.at(i) < 314572800) // between 128 KB and 300 MB
+		else if (pfirst.contains("bootloaderconfiguninstall options", Qt::CaseInsensitive))
 		{
-			tnarchivefileconts.append(archivefileconts.first.at(i));
+			this->bootloaderconfiguninstalloptions->setText(psecond);
 		}
-	}
-	narchivefileconts = filteroutlistL(tnarchivefileconts, ignoredtypesbothRL+ignoredtypesinitrdRL);
-	for (int i = 0; i < kernelnames.size(); ++i)
-	{
-		for (int j = 0; j < narchivefileconts.size(); ++j)
+		else if (pfirst.contains("bootloaderuninstall options", Qt::CaseInsensitive))
 		{
-			if (narchivefileconts.at(j).right(narchivefileconts.at(j).size() - narchivefileconts.at(j).lastIndexOf(QDir::toNativeSeparators("/")) - 1).contains(kernelnames.at(i), Qt::CaseInsensitive))
-			{
-				return narchivefileconts.at(j);
-			}
+			this->bootloaderuninstalloptions->setText(psecond);
 		}
-	}
-	pdesc1->setText("");
-	return "";
-}
-
-bool unetbootin::extractinitrd(QString archivefile, QString kernoutputfile, QPair<QStringList, QList<quint64> > archivefileconts)
-{
-	QString kfloc = locateinitrd(archivefile, archivefileconts);
-	if (kfloc == "")
-		return false;
-	pdesc1->setText(tr("Copying initrd file from %1").arg(kfloc));
-	return extractfile(kfloc, kernoutputfile, archivefile);
-}
-
-QString unetbootin::extractcfg(QString archivefile, QStringList archivefileconts)
-{
-	pdesc1->setText(tr("Extracting bootloader configuration"));
-	QString saltpcfg;
-	QString grubpcfg;
-	QString syslinuxpcfg;
-	QStringList saltdetectfiles = QStringList() << "boot/grub2-linux.img" << "boot/grub/salt.env";
-	QStringList grubcfgtypes = QStringList() << "menu.lst" << "grub.conf";
-	QStringList mlstfoundfiles;
-	int saltDetected = 0; // must be equals to saltdetectfiles.size() to be considered as detected
-	for (int i = 0; i < saltdetectfiles.size(); ++i)
-	{
-		mlstfoundfiles = archivefileconts.filter(saltdetectfiles.at(i), Qt::CaseInsensitive);
-		if (!mlstfoundfiles.isEmpty())
+		else if (pfirst.contains("bootloaderinstall options", Qt::CaseInsensitive))
 		{
-			saltDetected++;
+			this->bootloaderinstalloptions->setText(psecond);
 		}
-	}
-	if (saltDetected == saltdetectfiles.size()) {
-		saltpcfg = SALT_DETECTED; // not a real config, but used to inform that SaLT has been detected.
-	}
-	else
-	{
-    for (int i = 0; i < grubcfgtypes.size(); ++i)
-	{
-		mlstfoundfiles = archivefileconts.filter(grubcfgtypes.at(i), Qt::CaseInsensitive);
-		if (!mlstfoundfiles.isEmpty())
-		{
-			for (int j = 0; j < mlstfoundfiles.size(); ++j)
-			{
-				randtmpfile mlstftf(ubntmpf, "lst");
-				extractfile(archivefileconts.filter(grubcfgtypes.at(i), Qt::CaseInsensitive).at(j), mlstftf.fileName(), archivefile);
-				grubpcfg = getgrubcfgargs(mlstftf.fileName()).trimmed();
-				rmFile(mlstftf);
-				if (!grubpcfg.isEmpty())
-					break;
-			}
-		}
-		if (!grubpcfg.isEmpty())
-			break;
-	}
-	QStringList syslinuxcfgtypes = QStringList() << "syslinux.cfg" << "isolinux.cfg" << "extlinux.cfg" << "pxelinux.cfg" << "grubenv" << "menu_en.cfg" << "en.cfg" << "extlinux.conf" << "grub.cfg" << ".cfg";
-	QStringList lcfgfoundfiles;
-	for (int i = 0; i < syslinuxcfgtypes.size(); ++i)
-	{
-		lcfgfoundfiles = archivefileconts.filter(syslinuxcfgtypes.at(i), Qt::CaseInsensitive);
-		if (!lcfgfoundfiles.isEmpty())
-		{
-			for (int j = 0; j < lcfgfoundfiles.size(); ++j)
-			{
-				randtmpfile ccfgftf(ubntmpf, "cfg");
-				extractfile(archivefileconts.filter(syslinuxcfgtypes.at(i), Qt::CaseInsensitive).at(j), ccfgftf.fileName(), archivefile);
-				if (lcfgfoundfiles.at(j).contains("grubenv"))
-					loadgrub2env(ccfgftf.fileName());
-				else if (lcfgfoundfiles.at(j).contains("grub"))
-					syslinuxpcfg = getgrub2cfgargs(ccfgftf.fileName(), archivefile, archivefileconts, QStringList() << lcfgfoundfiles.at(j)).trimmed();
-				else
-					syslinuxpcfg = getcfgkernargs(ccfgftf.fileName(), archivefile, archivefileconts, QStringList() << lcfgfoundfiles.at(j)).trimmed();
-				rmFile(ccfgftf);
-				if (!syslinuxpcfg.isEmpty())
-					break;
-			}
-		}
-		if (!syslinuxpcfg.isEmpty())
-			break;
-	}
-	}
-	if (!saltpcfg.isEmpty()) {
-		return saltpcfg;
-	}
-	else if (syslinuxpcfg.isEmpty())
-	{
-		return grubpcfg;
-	}
-	else
-	{
-		return syslinuxpcfg;
-	}
-}
-
-QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetbootin::extractcfgL(QString archivefile, QStringList archivefileconts)
-{
-	pdesc1->setText(tr("Extracting bootloader configuration"));
-	QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > grubpcfgPL;
-	QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > syslinuxpcfgPL;
-	QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > combinedcfgPL;
-	QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > filteredcfgPL;
-	QStringList grubcfgtypes = QStringList() << "menu.lst" << "grub.conf";
-	QStringList mlstfoundfiles;
-	for (int i = 0; i < grubcfgtypes.size(); ++i)
-	{
-		mlstfoundfiles = archivefileconts.filter(grubcfgtypes.at(i), Qt::CaseInsensitive);
-		if (!mlstfoundfiles.isEmpty())
-		{
-			for (int j = 0; j < mlstfoundfiles.size(); ++j)
-			{
-				randtmpfile mlstftf(ubntmpf, "lst");
-				extractfile(archivefileconts.filter(grubcfgtypes.at(i), Qt::CaseInsensitive).at(j), mlstftf.fileName(), archivefile);
-				grubpcfgPL = getgrubcfgargsL(mlstftf.fileName());
-				rmFile(mlstftf);
-				combinedcfgPL.first.first += grubpcfgPL.first.first;
-				combinedcfgPL.first.second += grubpcfgPL.first.second;
-				combinedcfgPL.second.first += grubpcfgPL.second.first;
-				combinedcfgPL.second.second += grubpcfgPL.second.second;
-//				if (!grubpcfg.isEmpty())
-//					break;
-			}
-		}
-//		if (!grubpcfg.isEmpty())
-//			break;
-	}
-	QStringList syslinuxcfgtypes = QStringList() << "syslinux.cfg" << "isolinux.cfg" << "extlinux.cfg" << "pxelinux.cfg" << "grubenv" << "extlinux.conf" << "grub.cfg";
-	QStringList lcfgfoundfiles;
-	for (int i = 0; i < syslinuxcfgtypes.size(); ++i)
-	{
-		lcfgfoundfiles = archivefileconts.filter(syslinuxcfgtypes.at(i), Qt::CaseInsensitive);
-		if (!lcfgfoundfiles.isEmpty())
-		{
-			for (int j = 0; j < lcfgfoundfiles.size(); ++j)
-			{
-				randtmpfile ccfgftf(ubntmpf, "cfg");
-                extractfile(archivefileconts.filter(syslinuxcfgtypes.at(i), Qt::CaseInsensitive).at(j), ccfgftf.fileName(), archivefile);
-				if (lcfgfoundfiles.at(j).contains("grubenv"))
-					loadgrub2env(ccfgftf.fileName());
-				else if (lcfgfoundfiles.at(j).contains("grub"))
-					syslinuxpcfgPL = getgrub2cfgargsL(ccfgftf.fileName(), archivefile, archivefileconts, QStringList() << lcfgfoundfiles.at(j));
-				else
-					syslinuxpcfgPL = getcfgkernargsL(ccfgftf.fileName(), archivefile, archivefileconts, QStringList() << lcfgfoundfiles.at(j));
-				rmFile(ccfgftf);
-				combinedcfgPL.first.first += syslinuxpcfgPL.first.first;
-				combinedcfgPL.first.second += syslinuxpcfgPL.first.second;
-				combinedcfgPL.second.first += syslinuxpcfgPL.second.first;
-				combinedcfgPL.second.second += syslinuxpcfgPL.second.second;
-//				if (!syslinuxpcfg.isEmpty())
-//					break;
-			}
-		}
-//		if (!syslinuxpcfg.isEmpty())
-//			break;
-	}
-	/*
-	if (syslinuxpcfg.isEmpty())
-	{
-		return grubpcfg;
-	}
-	else
-	{
-		return syslinuxpcfg;
-	}
-	*/
-#ifdef NOINITRD
-    for (int i = 0; i < combinedcfgPL.first.second.size(); ++i)
-    {
-        combinedcfgPL.first.second[i] = "";
-    }
-    for (int i = 0; i < combinedcfgPL.second.second.size(); ++i)
-    {
-        combinedcfgPL.second.second[i] = "";
-    }
-#endif
-	for (int i = 0; i < combinedcfgPL.first.first.size(); ++i)
-	{
-		bool isduplicate = false;
-		for (int j = 0; j < filteredcfgPL.second.first.size(); ++j)
-		{
-			if (filteredcfgPL.second.first.at(j) == combinedcfgPL.second.first.at(i)) // duplicate title
-			{
-				isduplicate = true;
-				break;
-			}
-		}
-		if (isduplicate)
-			continue;
-		if (combinedcfgPL.first.first.at(i) == kernelLoc && combinedcfgPL.first.second.at(i) == initrdLoc && combinedcfgPL.second.first.at(i).contains("Untitled Entry") && combinedcfgPL.second.second.at(i).isEmpty())
-			continue;
-//		else if (filteredcfgPL.second.first.contains(combinedcfgPL.second.first.at(i)))
-//			continue;
-		else
-		{
-			if (combinedcfgPL.first.first.at(i).isEmpty())
-				filteredcfgPL.first.first.append(kernelLoc);
-			else
-			{
-				QString indvkrnloc = getfullarchivepath(combinedcfgPL.first.first.at(i), archivefileconts);
-				if (indvkrnloc.isEmpty())
-					filteredcfgPL.first.first.append(kernelLoc);
-				else
-					filteredcfgPL.first.first.append(indvkrnloc);
-			}
-//			filteredcfgPL.first.first.append(combinedcfgPL.first.first.at(i));
-			if (combinedcfgPL.first.second.at(i).isEmpty())
-				filteredcfgPL.first.second.append(kernelLoc);
-			else
-			{
-				QString indvitrloc = getfullarchivepath(combinedcfgPL.first.second.at(i), archivefileconts);
-				if (indvitrloc.isEmpty())
-				{
-					filteredcfgPL.first.second.append(initrdLoc);
-				}
-				else
-					filteredcfgPL.first.second.append(indvitrloc);
-			}
-//			filteredcfgPL.first.second.append(combinedcfgPL.first.second.at(i));
-			filteredcfgPL.second.first.append(combinedcfgPL.second.first.at(i));
-			filteredcfgPL.second.second.append(combinedcfgPL.second.second.at(i));
-		}
-	}
-    if (redundanttopleveldir && !redundantrootdirname.isEmpty())
-    {
-        for (int i = 0; i < filteredcfgPL.first.second.size(); ++i)
-        {
-            if (filteredcfgPL.first.second.at(i).startsWith(redundantrootdirname))
-            {
-                filteredcfgPL.first.second[i] = filteredcfgPL.first.second[i].mid(redundantrootdirname.length());
-            }
-            if (filteredcfgPL.first.second.at(i).startsWith("/" + redundantrootdirname))
-            {
-                filteredcfgPL.first.second[i] = filteredcfgPL.first.second[i].mid(redundantrootdirname.length() + 1);
-            }
-        }
-    }
-    return filteredcfgPL;
-}
-
-QString unetbootin::getfullarchivepath(QString relativefilepath, QStringList archivefile)
-{
-	QStringList pfoundmatches;
-	relativefilepath = QDir::fromNativeSeparators(relativefilepath);
-	if (relativefilepath.endsWith('/'))
-		relativefilepath = relativefilepath.left(relativefilepath.size()-1);
-	if (!relativefilepath.startsWith('/'))
-		relativefilepath = QString("/%1").arg(relativefilepath);
-//	if (!relativefilepath.endsWith('/'))
-//		relativefilepath = QString("%1/").arg(relativefilepath);
-	for (int i = 0; i < archivefile.size(); ++i)
-	{
-		QString curarchiveitem = QDir::fromNativeSeparators(archivefile.at(i));
-		if (curarchiveitem.endsWith('/'))
-			curarchiveitem = curarchiveitem.left(curarchiveitem.size()-1);
-		if (!curarchiveitem.startsWith('/'))
-			curarchiveitem = QString("/%1").arg(curarchiveitem);
-//		if (!curarchiveitem.endsWith('/'))
-//			curarchiveitem = QString("%1/").arg(curarchiveitem);
-		if (curarchiveitem.contains(QRegExp(relativefilepath+"$", Qt::CaseInsensitive)))
-			pfoundmatches.append(curarchiveitem);
-	}
-	if (pfoundmatches.isEmpty())
-		return "";
-	else
-	{
-		return filteroutlist(pfoundmatches, ignoredtypesbothRL);
-	}
-}
-
-QString unetbootin::filteroutlist(QString listofdata, QList<QRegExp> listofmatches)
-{
-	if (listofdata.isEmpty())
-		return "";
-	return filteroutlist(QStringList() << listofdata, listofmatches);
-}
-
-QString unetbootin::filteroutlist(QStringList listofdata, QList<QRegExp> listofmatches)
-{
-	if (listofdata.isEmpty())
-		return "";
-	QStringList fldatalist = filteroutlistL(listofdata, listofmatches);
-	if (!fldatalist.isEmpty())
-		return fldatalist.at(0);
-	else
-		return "";
-}
-
-QStringList unetbootin::filteroutlistL(QStringList listofdata, QList<QRegExp> listofmatches)
-{
-	if (listofdata.isEmpty())
-		return QStringList();
-	if (listofmatches.isEmpty())
-		return listofdata;
-	if (listofdata.size() == 1)
-		return listofdata;
-	QStringList newlistofdata;
-	for (int i = 0; i < listofdata.size(); ++i)
-	{
-		if (!listofdata.at(i).contains(listofmatches.at(0)))
-			newlistofdata.append(listofdata.at(i));
-	}
-//	QStringList newlistofdata = QStringList(listofdata).filter(listofmatches.at(0));
-	listofmatches.removeAt(0);
-	if (newlistofdata.isEmpty())
-	{
-		return filteroutlistL(listofdata, listofmatches);
-	}
-	else
-	{
-		return filteroutlistL(newlistofdata, listofmatches);
-	}
-}
-
-void unetbootin::extractiso(QString isofile)
-{
-	if (!sdesc2->text().contains(trcurrent))
-	{
-		sdesc1->setText(QString(sdesc1->text()).remove("<b>").replace(trcurrent+"</b>", trdone));
-		sdesc2->setText(QString("<b>%1 %2</b>").arg(sdesc2->text()).arg(trcurrent));
-	}
-	tprogress->setValue(0);
-	QPair<QPair<QStringList, QList<quint64> >, QStringList> listfilesizedirpair = listarchiveconts(isofile);
-	if (listfilesizedirpair.first.first.size() == 1)
-	{
-		QString subarchivename = listfilesizedirpair.first.first.at(0);
-		randtmpfile tmpoutsubarchive(ubntmpf, subarchivename.right(3));
-		pdesc1->setText(tr("<b>Extracting compressed iso:</b> %1").arg(subarchivename));
-		extractfile(subarchivename, tmpoutsubarchive.fileName(), isofile);
-		return extractiso(tmpoutsubarchive.fileName());
-	}
-	if (listfilesizedirpair.first.first.contains(QDir::toNativeSeparators("rescue/KRD.VERSION"), Qt::CaseInsensitive))
-	{
-		return extractiso_krd10(isofile);
-	}
-	QFileInfo isofileFI(isofile);
-	qint64 isofileSize = isofileFI.size();
-	if (listfilesizedirpair.first.first.size() < 10 && isofileSize > 12)
-	{
-		bool foundiso = false;
-		quint64 isofileSizeOneFourth = isofileSize / 4;
-		quint64 isofileSizeThreeFourth = isofileSizeOneFourth * 3;
-		for (int i = 0; i < listfilesizedirpair.first.first.size() && i < listfilesizedirpair.first.second.size(); ++i)
-		{
-			if (listfilesizedirpair.first.first.at(i).contains(QRegExp(".iso$", Qt::CaseInsensitive)))
-			{
-				if (foundiso)
-					break;
-				foundiso = true;
-				if (listfilesizedirpair.first.second.at(i) > isofileSizeThreeFourth)
-				{
-					QString subarchivename = listfilesizedirpair.first.first.at(i);
-					randtmpfile tmpoutsubarchive(ubntmpf, subarchivename.right(3));
-					pdesc1->setText(tr("<b>Extracting compressed iso:</b> %1").arg(subarchivename));
-					extractfile(subarchivename, tmpoutsubarchive.fileName(), isofile);
-					return extractiso(tmpoutsubarchive.fileName());
-				}
-			}
-		}
-	}
-	QStringList filepathnames = listfilesizedirpair.first.first;
-	QStringList directorypathnames;
-	if (listfilesizedirpair.second.size() > 0)
-	{
-        redundanttopleveldir = true;
-        redundantrootdirname = listfilesizedirpair.second.at(0);
-		for (int i = 0; i < listfilesizedirpair.second.size(); ++i)
-		{
-			if (listfilesizedirpair.second.at(i).size() < redundantrootdirname.size())
-				redundantrootdirname = listfilesizedirpair.second.at(i);
-		}
-		if (redundantrootdirname == "boot" ||
-			redundantrootdirname == "syslinux" ||
-			redundantrootdirname == "grub" ||
-			redundantrootdirname == "isolinux" ||
-			redundantrootdirname == "extlinux" ||
-			redundantrootdirname == "pxelinux")
-			redundanttopleveldir = false;
-		for (int i = 0; i < listfilesizedirpair.second.size(); ++i) // redundant toplevel path in dirs
-		{
-			if (!listfilesizedirpair.second.at(i).startsWith(redundantrootdirname))
-				redundanttopleveldir = false;
-		}
-		if (redundanttopleveldir)
-		{
-			for (int i = 0; i < listfilesizedirpair.first.first.size(); ++i) // redundant toplevel path in files
-			{
-				if (!listfilesizedirpair.first.first.at(i).startsWith(redundantrootdirname))
-					redundanttopleveldir = false;
-			}
-		}
-		if (redundanttopleveldir)
-		{
-			int rmnumcharsrootdir = redundantrootdirname.size();
-			for (int i = 0; i < listfilesizedirpair.second.size(); ++i)
-			{
-				QString tmpdirectpath = listfilesizedirpair.second[i];
-				tmpdirectpath.remove(0, rmnumcharsrootdir);
-				if (tmpdirectpath.startsWith("/") || tmpdirectpath.startsWith(QDir::toNativeSeparators("/")))
-				{
-					tmpdirectpath.remove(0, 1);
-				}
-				if (!tmpdirectpath.isEmpty())
-				{
-					directorypathnames.append(tmpdirectpath);
-				}
-			}
-			for (int i = 0; i < listfilesizedirpair.first.first.size(); ++i)
-			{
-				filepathnames[i].remove(0, rmnumcharsrootdir);
-				if (filepathnames[i].startsWith("/") || filepathnames[i].startsWith(QDir::toNativeSeparators("/")))
-				{
-					filepathnames[i].remove(0, 1);
-				}
-			}
-		}
-		else
-		{
-			directorypathnames = listfilesizedirpair.second;
-		}
-	}
-	if (installType == tr("USB Drive"))
-	{
-		QStringList syslinuxfilepaths = QStringList() << "boot/syslinux/syslinux.cfg" << "syslinux/syslinux.cfg" << "syslinux.cfg" << "isolinux.cfg" << "extlinux.conf";
-		if (QString(QDir::toNativeSeparators("/")) != QString("/"))
-		{
-            syslinuxfilepaths << QString("boot%1syslinux%1syslinux.cfg").arg(QDir::toNativeSeparators("/")) <<  QString("syslinux%1syslinux.cfg").arg(QDir::toNativeSeparators("/"));
-		}
-		for (int j = 0; j < syslinuxfilepaths.size(); ++j)
-		{
-			rmFile(QString("%1%2").arg(targetPath).arg(syslinuxfilepaths.at(j)));
-			for (int i = 0; i < filepathnames.size(); ++i)
-			{
-				if (filepathnames.at(i) == syslinuxfilepaths.at(j))
-				{
-					dontgeneratesyslinuxcfg = true;
-					locatedsyslinuxcfgfiles.append(syslinuxfilepaths.at(j));
-				}
-			}
-		}
-	}
-	if (!dontgeneratesyslinuxcfg)
-	{
-	kernelOpts = extractcfg(isofile, listfilesizedirpair.first.first);
-	issalt = (kernelOpts == SALT_DETECTED);
-	if (issalt)
-	{
-		QStringList mlstfoundfiles = listfilesizedirpair.second.filter(QRegExp("/modules$", Qt::CaseInsensitive));
-		if (!mlstfoundfiles.isEmpty())
-		{
-      QString match = mlstfoundfiles.at(0);
-			saltRootDir = match.replace(QRegExp("(.*)/modules"), "\\1");
-		}
-		kernelLine = "linux";
-		kernelOpts = "";
-		initrdLoc = "";
-	  initrdOpts = "";
-	  initrdLine = "";
-	  slinitrdLine = "";
-	}
-	else
-	{
-	extraoptionsPL = extractcfgL(isofile, listfilesizedirpair.first.first);
-	}
-
-#ifndef NOEXTRACTKERNEL
-	extractkernel(isofile, QString("%1ubnkern").arg(targetPath), listfilesizedirpair.first);
-#endif
-#ifndef NOEXTRACTINITRD
-	if (!issalt)
-	{
-	extractinitrd(isofile, QString("%1ubninit").arg(targetPath), listfilesizedirpair.first);
-	}
-#endif
-	}
-	QStringList createdpaths = makepathtree(targetDrive, directorypathnames);
-	QFile ubnpathlF(QDir::toNativeSeparators(QString("%1ubnpathl.txt").arg(targetPath)));
-	if (ubnpathlF.exists())
-	{
-		rmFile(ubnpathlF);
-	}
-	ubnpathlF.open(QIODevice::WriteOnly | QIODevice::Text);
-	QTextStream ubnpathlS(&ubnpathlF);
-	for (int i = createdpaths.size() - 1; i > -1; i--)
-	{
-		ubnpathlS << createdpaths.at(i) << endl;
-	}
-	ubnpathlF.close();
-    QStringList extractedfiles;
-    if (!skipExtraction)
-      extractedfiles = extractallfiles(isofile, targetDrive, listfilesizedirpair.first, filepathnames);
-	QFile ubnfilelF(QDir::toNativeSeparators(QString("%1ubnfilel.txt").arg(targetPath)));
-	if (ubnfilelF.exists())
-	{
-		rmFile(ubnfilelF);
-	}
-	ubnfilelF.open(QIODevice::WriteOnly | QIODevice::Text);
-	QTextStream ubnfilelS(&ubnfilelF);
-	for (int i = 0; i < extractedfiles.size(); ++i)
-	{
-		ubnfilelS << extractedfiles.at(i) << endl;
-	}
-	ubnfilelF.close();
-#ifdef XPUD
-	rmFile(QString("%1boot.cat").arg(targetPath));
-	rmFile(QString("%1isolinux.bin").arg(targetPath));
-	rmFile(QString("%1syslinux.cfg").arg(targetPath));
-	QFile::rename(QString("%1isolinux.cfg").arg(targetPath), QString("%1syslinux.cfg").arg(targetPath));
-	if (installType == tr("USB Drive"))
-	{
-		rmFile(QString("%1ubnfilel.txt").arg(targetPath));
-		rmFile(QString("%1ubnpathl.txt").arg(targetPath));
-	}
-#endif
-}
-
-void unetbootin::extractiso_krd10(QString isofile)
-{
-	if (!sdesc2->text().contains(trcurrent))
-	{
-		sdesc1->setText(QString(sdesc1->text()).remove("<b>").replace(trcurrent+"</b>", trdone));
-		sdesc2->setText(QString("<b>%1 %2</b>").arg(sdesc2->text()).arg(trdone));
-	}
-	tprogress->setValue(0);
-	QPair<QPair<QStringList, QList<quint64> >, QStringList> listfilesizedirpair = listarchiveconts(isofile);
-	kernelLoc = QDir::fromNativeSeparators(locatekernel(isofile, listfilesizedirpair.first));
-	if (!kernelLoc.startsWith("/")) kernelLoc.prepend("/");
-	initrdLoc = QDir::fromNativeSeparators(locateinitrd(isofile, listfilesizedirpair.first));
-	if (!initrdLoc.startsWith("/")) initrdLoc.prepend("/");
-	kernelOpts = extractcfg(isofile, listfilesizedirpair.first.first);
-	extraoptionsPL.first.first.clear();
-	extraoptionsPL.first.second.clear();
-	extraoptionsPL.second.first.clear();
-	extraoptionsPL.second.second.clear();
+		else if (pfirst
 	QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > tmpoptionsL = extractcfgL(isofile, listfilesizedirpair.first.first);
 	for (int i = 0; i < tmpoptionsL.second.second.size(); ++i)
 	{
@@ -1986,128 +745,22 @@ QString unetbootin::getFirstTextBlock(QString fulltext)
 	}
 }
 
-void unetbootin::loadgrub2env(QString cfgfile)
+QString unetbootin::fixkernelbootoptions(QString kernelbootoptions)
 {
-	QFile cfgfileF(cfgfile);
-	cfgfileF.open(QIODevice::ReadOnly | QIODevice::Text);
-	QTextStream cfgfileS(&cfgfileF);
-	QString cfgfileCL;
-	while (!cfgfileS.atEnd())
+	QStringList kernelbootoptionsL = kernelbootoptions.split(QRegExp("\\s{1,}")).filter(QRegExp("\\S{1,}"));
+	QStringList kernelbootoptionsLfixed;
+	for (int i = 0; i < kernelbootoptionsL.size(); ++i)
 	{
-		cfgfileCL = cfgfileS.readLine().trimmed();
-		if (cfgfileCL.contains("#"))
-		{
-			cfgfileCL = cfgfileCL.left(cfgfileCL.indexOf("#")).trimmed();
-		}
-		if (cfgfileCL.contains("${"))
-		{
-			for (QMap<QString, QString>::const_iterator i = grub2vars.begin(); i != grub2vars.end(); ++i)
-			{
-				if (cfgfileCL.contains(QString("${%1}").arg(i.key())))
-					cfgfileCL.replace(QString("${%1}").arg(i.key()), i.value());
-			}
-		}
-		if (cfgfileCL.contains(QRegExp("^set\\s{1,}\\S{1,}\\s{0,}=\\s{0,}\".{1,}\"")))
-		{
-			QRegExp setrg("^set\\s{1,}(\\S{1,})\\s{0,}=\\s{0,}\"(.{1,})\"");
-			setrg.indexIn(cfgfileCL);
-			QStringList captxt = setrg.capturedTexts();
-			if (captxt.size() >= 2)
-			{
-				grub2vars[captxt.at(captxt.size()-2)] = captxt.at(captxt.size()-1);
-				continue;
-			}
-		}
-		if (cfgfileCL.contains(QRegExp("^set\\s{1,}\\S{1,}\\s{0,}=\\s{0,}\\S{1,}")))
-		{
-			QRegExp setrg("^set\\s{1,}(\\S{1,})\\s{0,}=\\s{0,}(\\S{1,})");
-			setrg.indexIn(cfgfileCL);
-			QStringList captxt = setrg.capturedTexts();
-			if (captxt.size() >= 2)
-			{
-				grub2vars[captxt.at(captxt.size()-2)] = captxt.at(captxt.size()-1);
-				continue;
-			}
-		}
-		if (cfgfileCL.count("=") == 1)
-		{
-			QStringList splp = cfgfileCL.split("=");
-			if (splp.size() == 2)
-			{
-				grub2vars[splp.at(0).trimmed()] = QString(splp.at(1)).remove("\"").trimmed();
-			}
-		}
+		if (kernelbootoptionsL.at(i).contains("="))
+			kernelbootoptionsLfixed.append(kernelbootoptionsL.at(i));
+		else
+			kernelbootoptionsLfixed.append(QString("%1=%2").arg(kernelbootoptionsL.at(i)).arg(kernelbootoptionsL.at(i + 1)));
+		++i;
 	}
+	return kernelbootoptionsLfixed.join(" ");
 }
 
-QString unetbootin::getgrub2cfgargs(QString cfgfile, QString archivefile, QStringList archivefileconts, QStringList visitedincludes)
-{
-	QFile cfgfileF(cfgfile);
-	cfgfileF.open(QIODevice::ReadOnly | QIODevice::Text);
-	QTextStream cfgfileS(&cfgfileF);
-	QString cfgfileCL;
-	QString includesfile;
-	QString searchincfrs;
-	while (!cfgfileS.atEnd())
-	{
-		cfgfileCL = cfgfileS.readLine().trimmed();
-		if (cfgfileCL.contains("#"))
-		{
-			cfgfileCL = cfgfileCL.left(cfgfileCL.indexOf("#")).trimmed();
-		}
-		if (cfgfileCL.contains("${"))
-		{
-			for (QMap<QString, QString>::const_iterator i = grub2vars.begin(); i != grub2vars.end(); ++i)
-			{
-				if (cfgfileCL.contains(QString("${%1}").arg(i.key())))
-					cfgfileCL.replace(QString("${%1}").arg(i.key()), i.value());
-			}
-		}
-		if (cfgfileCL.contains(QRegExp("^set\\s{1,}\\S{1,}\\s{0,}=\\s{0,}\".{1,}\"")))
-		{
-			QRegExp setrg("^set\\s{1,}(\\S{1,})\\s{0,}=\\s{0,}\"(.{1,})\"");
-			setrg.indexIn(cfgfileCL);
-			QStringList captxt = setrg.capturedTexts();
-			if (captxt.size() >= 2)
-			{
-				grub2vars[captxt.at(captxt.size()-2)] = captxt.at(captxt.size()-1);
-				continue;
-			}
-		}
-		if (cfgfileCL.contains(QRegExp("^set\\s{1,}\\S{1,}\\s{0,}=\\s{0,}\\S{1,}")))
-		{
-			QRegExp setrg("^set\\s{1,}(\\S{1,})\\s{0,}=\\s{0,}(\\S{1,})");
-			setrg.indexIn(cfgfileCL);
-			QStringList captxt = setrg.capturedTexts();
-			if (captxt.size() >= 2)
-			{
-				grub2vars[captxt.at(captxt.size()-2)] = captxt.at(captxt.size()-1);
-				continue;
-			}
-		}
-		if (!archivefileconts.isEmpty() && QRegExp("^configfile\\s{1,}\\S{1,}.cfg$", Qt::CaseInsensitive).exactMatch(cfgfileCL))
-		{
-			includesfile = QDir::toNativeSeparators(QString(cfgfileCL).remove(QRegExp("^configfile\\s{1,}", Qt::CaseInsensitive))).trimmed();
-			searchincfrs = searchforgrub2includesfile(includesfile, archivefile, archivefileconts, visitedincludes).trimmed();
-			if (!searchincfrs.isEmpty())
-				return searchincfrs;
-		}
-		if (!archivefileconts.isEmpty() && QRegExp("^source\\s{1,}\\S{1,}.cfg$", Qt::CaseInsensitive).exactMatch(cfgfileCL))
-		{
-			includesfile = QDir::toNativeSeparators(QString(cfgfileCL).remove(QRegExp("^source\\s{1,}", Qt::CaseInsensitive))).trimmed();
-			searchincfrs = searchforgrub2includesfile(includesfile, archivefile, archivefileconts, visitedincludes).trimmed();
-			if (!searchincfrs.isEmpty())
-				return searchincfrs;
-		}
-		if (cfgfileCL.contains(QRegExp("^linux\\s{1,}\\S{1,}\\s{1,}\\S{1,}", Qt::CaseInsensitive)))
-		{
-			return fixkernelbootoptions(QString(cfgfileCL).remove(QRegExp("^linux\\s{1,}\\S{1,}\\s{1,}", Qt::CaseInsensitive))).remove(QRegExp("initrd=\\S{0,}")).trimmed();
-		}
-	}
-	return "";
-}
-
-QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetbootin::getgrub2cfgargsL(QString cfgfile, QString archivefile, QStringList archivefileconts, QStringList visitedincludes)
+QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetbootin::getgrubcfgargsL(QString cfgfile, QString archivefile, QStringList archivefileconts)
 {
 	QPair<QStringList, QStringList> kernelandinitrd;
 	QPair<QStringList, QStringList> titleandparams;
@@ -2121,8 +774,6 @@ QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetboo
 	kernelandinitrd.second.append(initrdLoc);
 	titleandparams.first.append(QString("Untitled Entry Grub %1").arg(curindex));
 	titleandparams.second.append("");
-	QString includesfile;
-	QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > searchincfrs;
 	while (!cfgfileS.atEnd())
 	{
 		cfgfileCL = cfgfileS.readLine().trimmed();
@@ -2130,63 +781,7 @@ QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetboo
 		{
 			cfgfileCL = cfgfileCL.left(cfgfileCL.indexOf("#")).trimmed();
 		}
-		if (cfgfileCL.contains("${"))
-		{
-			for (QMap<QString, QString>::const_iterator i = grub2vars.begin(); i != grub2vars.end(); ++i)
-			{
-				if (cfgfileCL.contains(QString("${%1}").arg(i.key())))
-					cfgfileCL.replace(QString("${%1}").arg(i.key()), i.value());
-			}
-		}
-		if (cfgfileCL.contains(QRegExp("^set\\s{1,}\\S{1,}\\s{0,}=\\s{0,}\".{1,}\"")))
-		{
-			QRegExp setrg("^set\\s{1,}(\\S{1,})\\s{0,}=\\s{0,}\"(.{1,})\"");
-			setrg.indexIn(cfgfileCL);
-			QStringList captxt = setrg.capturedTexts();
-			if (captxt.size() >= 2)
-			{
-				grub2vars[captxt.at(captxt.size()-2)] = captxt.at(captxt.size()-1);
-				continue;
-			}
-		}
-		if (cfgfileCL.contains(QRegExp("^set\\s{1,}\\S{1,}\\s{0,}=\\s{0,}\\S{1,}")))
-		{
-			QRegExp setrg("^set\\s{1,}(\\S{1,})\\s{0,}=\\s{0,}(\\S{1,})");
-			setrg.indexIn(cfgfileCL);
-			QStringList captxt = setrg.capturedTexts();
-			if (captxt.size() >= 2)
-			{
-				grub2vars[captxt.at(captxt.size()-2)] = captxt.at(captxt.size()-1);
-				continue;
-			}
-		}
-		if (!archivefileconts.isEmpty() && QRegExp("^configfile\\s{1,}\\S{1,}.cfg$", Qt::CaseInsensitive).exactMatch(cfgfileCL))
-		{
-			includesfile = QDir::toNativeSeparators(QString(cfgfileCL).remove(QRegExp("^configfile\\s{1,}", Qt::CaseInsensitive))).trimmed();
-			searchincfrs = searchforgrub2includesfileL(includesfile, archivefile, archivefileconts, visitedincludes);
-			if (!searchincfrs.first.first.isEmpty())
-			{
-				kernelandinitrd.first += searchincfrs.first.first;
-				kernelandinitrd.second += searchincfrs.first.second;
-				titleandparams.first += searchincfrs.second.first;
-				titleandparams.second += searchincfrs.second.second;
-			}
-			continue;
-		}
-		if (!archivefileconts.isEmpty() && QRegExp("^source\\s{1,}\\S{1,}.cfg$", Qt::CaseInsensitive).exactMatch(cfgfileCL))
-		{
-			includesfile = QDir::toNativeSeparators(QString(cfgfileCL).remove(QRegExp("^source\\s{1,}", Qt::CaseInsensitive))).trimmed();
-			searchincfrs = searchforgrub2includesfileL(includesfile, archivefile, archivefileconts, visitedincludes);
-			if (!searchincfrs.first.first.isEmpty())
-			{
-				kernelandinitrd.first += searchincfrs.first.first;
-				kernelandinitrd.second += searchincfrs.first.second;
-				titleandparams.first += searchincfrs.second.first;
-				titleandparams.second += searchincfrs.second.second;
-			}
-			continue;
-		}
-		if (cfgfileCL.contains(QRegExp("^menuentry\\s{1,}\".{1,}\"", Qt::CaseInsensitive)))
+		if (cfgfileCL.contains(QRegExp("^title\\s{1,}\\S{1,}", Qt::CaseInsensitive)))
 		{
 			if (kernelpassed)
 			{
@@ -2197,83 +792,9 @@ QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetboo
 				titleandparams.second.append("");
 				kernelpassed = false;
 			}
-			titleandparams.first[curindex] = QString(cfgfileCL).remove("menuentry", Qt::CaseInsensitive).remove("\"").remove("{").remove("}").trimmed();
+			titleandparams.first[cur index] = QString(cfgfileCL).remove(QRegExp("^title", Qt::CaseInsensitive)).trimmed();
 			continue;
 		}
-		if (cfgfileCL.contains(QRegExp("^initrd\\s{1,}\\S{1,}", Qt::CaseInsensitive)))
-		{
-			kernelandinitrd.second[curindex] = getFirstTextBlock(QString(cfgfileCL).remove(QRegExp("^initrd", Qt::CaseInsensitive)).trimmed());
-//			if (kernelandinitrd.second.at(curindex).isEmpty())
-//				kernelandinitrd.second[curindex] = initrdLoc;
-			continue;
-		}
-//		if (cfgfileCL.contains(QRegExp("^module\\s{1,}\\S{1,}", Qt::CaseInsensitive)))
-//		{
-//			kernelandinitrd.second[curindex] = getFirstTextBlock(QString(cfgfileCL).remove(QRegExp("^module", Qt::CaseInsensitive)).trimmed());
-//			if (kernelandinitrd.second.at(curindex).isEmpty())
-//				kernelandinitrd.second[curindex] = initrdLoc;
-//		}
-		if (cfgfileCL.contains(QRegExp("^linux\\s{1,}\\S{1,}", Qt::CaseInsensitive)))
-		{
-			if (kernelpassed)
-			{
-				++curindex;
-				kernelandinitrd.first.append(kernelLoc);
-				kernelandinitrd.second.append(initrdLoc);
-				titleandparams.first.append(QString("Untitled Entry Grub %1").arg(curindex));
-				titleandparams.second.append("");
-//				kernelpassed = false;
-			}
-			if (cfgfileCL.contains(QRegExp("^linux\\s{1,}\\S{1,}\\s{1,}\\S{1,}", Qt::CaseInsensitive)))
-			{
-				titleandparams.second[curindex] = fixkernelbootoptions(QString(cfgfileCL).remove(QRegExp("^linux\\s{1,}\\S{1,}\\s{1,}", Qt::CaseInsensitive))).remove(QRegExp("initrd=\\S{0,}")).trimmed();
-			}
-			kernelandinitrd.first[curindex] = getFirstTextBlock(QString(cfgfileCL).remove(QRegExp("^linux", Qt::CaseInsensitive)).trimmed());
-//			if (kernelandinitrd.first.at(curindex).isEmpty())
-//				kernelandinitrd.first[curindex] = kernelLoc;
-			kernelpassed = true;
-			continue;
-		}
-	}
-	return qMakePair(kernelandinitrd, titleandparams);
-}
-
-QString unetbootin::getcfgkernargs(QString cfgfile, QString archivefile, QStringList archivefileconts, QStringList visitedincludes)
-{
-	QFile cfgfileF(cfgfile);
-	cfgfileF.open(QIODevice::ReadOnly | QIODevice::Text);
-	QTextStream cfgfileS(&cfgfileF);
-	QString cfgfileCL;
-	QString includesfile;
-	QString searchincfrs;
-	while (!cfgfileS.atEnd())
-	{
-		cfgfileCL = cfgfileS.readLine().trimmed();
-		if (cfgfileCL.contains("#"))
-		{
-			cfgfileCL = cfgfileCL.left(cfgfileCL.indexOf("#")).trimmed();
-		}
-		if (!archivefileconts.isEmpty() && QRegExp("^include\\s{1,}\\S{1,}.cfg$", Qt::CaseInsensitive).exactMatch(cfgfileCL))
-		{
-			includesfile = QDir::toNativeSeparators(QString(cfgfileCL).remove(QRegExp("^include\\s{1,}", Qt::CaseInsensitive))).trimmed();
-			searchincfrs = searchforincludesfile(includesfile, archivefile, archivefileconts, visitedincludes).trimmed();
-			if (!searchincfrs.isEmpty())
-				return searchincfrs;
-		}
-		if (!archivefileconts.isEmpty() && QRegExp("^append\\s{1,}\\S{1,}.cfg$", Qt::CaseInsensitive).exactMatch(cfgfileCL))
-		{
-			includesfile = QDir::toNativeSeparators(QString(cfgfileCL).remove(QRegExp("^append\\s{1,}", Qt::CaseInsensitive))).trimmed();
-			searchincfrs = searchforincludesfile(includesfile, archivefile, archivefileconts, visitedincludes).trimmed();
-			if (!searchincfrs.isEmpty())
-				return searchincfrs;
-		}
-		else if (cfgfileCL.contains(QRegExp("^\\s{0,}append\\s{1,}", Qt::CaseInsensitive)))
-		{
-			return fixkernelbootoptions(QString(cfgfileCL).remove(QRegExp("\\s{0,}append\\s{1,}", Qt::CaseInsensitive)).remove(QRegExp("\\s{0,1}initrd=\\S{0,}", Qt::CaseInsensitive)));
-		}
-	}
-	return "";
-}
 
 QPair<QPair<QStringList, QStringList>, QPair<QStringList, QStringList> > unetbootin::getcfgkernargsL(QString cfgfile, QString archivefile, QStringList archivefileconts, QStringList visitedincludes)
 {
@@ -2619,27 +1140,33 @@ void unetbootin::downloadfile(QString fileurl, QString targetfile, qint64 minsiz
 	{
 		rmFile(targetfile);
 	}
-	QNetworkAccessManager manager;
-	QNetworkRequest dlurl(fileurl);
-	QNetworkReply * networkReply = manager.get(dlurl);
-
+	QNetworkRequest networkRequest;
+	networkRequest.setUrl(QUrl(fileurl));
+	networkRequest.setRawHeader("User-Agent", "unetbootin");
+	networkRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+	networkRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+	QNetworkReply *networkReply = networkManager.get(networkRequest);
 	QEventLoop dlewait;
-	pdesc5->setText("");
-	pdesc4->setText(tr("Downloading files, please wait..."));
-	pdesc3->setText(tr("<b>Source:</b> <a href=\"%1\">%1</a>").arg(fileurl));
-	pdesc2->setText(tr("<b>Destination:</b> %1").arg(targetfile));
-	pdesc1->setText(tr("<b>Downloaded:</b> 0 bytes"));
-
-	QUrl redirectUrl;
-	bool downloadFailed = false;
-	QNetworkReply::NetworkError errorCode;
-
 	connect(networkReply, &QNetworkReply::finished, &dlewait, &QEventLoop::quit);
-	connect(networkReply, &QNetworkReply::downloadProgress, this, &unetbootin::dlprogressupdate64);
-	connect(networkReply, &QNetworkReply::redirected, [&](const QUrl &url){ redirectUrl = url; });
-	connect(networkReply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
-			[&](QNetworkReply::NetworkError code){ downloadFailed = true; errorCode = code; });
-
+	connect(networkReply, &QNetworkReply::downloadProgress, [&](qint64 bytesReceived, qint64 bytesTotal){
+		if (bytesTotal > 0 && bytesReceived < minsize)
+		{
+			downloadFailed = true;
+			dlewait.quit();
+		}
+	});
+	connect(networkReply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [&](QNetworkReply::NetworkError code){
+		errorCode = code;
+		downloadFailed = true;
+		dlewait.quit();
+	});
+	connect(networkReply, &QNetworkReply::metaDataChanged, [&](){
+		QUrl redirectUrl = networkReply->attribute(QNetworkReply::RedirectionTargetAttribute).toUrl();
+		if (!redirectUrl.isEmpty())
+		{
+			dlewait.quit();
+		}
+	});
 	QFile dloutfile;
 	if (installType == tr("USB Drive"))
 	{
@@ -3509,28 +2036,9 @@ void unetbootin::runinst()
 	{
 		if (diskimagetypeselect->currentIndex() == diskimagetypeselect->findText(tr("Floppy")))
 		{
-			instIndvfl("memdisk", QString("%1ubnkern").arg(targetPath));
-			if (!FloppyPath->text().startsWith("http://") && !FloppyPath->text().startsWith("ftp://"))
-				QFile::copy(FloppyPath->text(), QString("%1ubninit").arg(targetPath));
-			else
-				downloadfile(FloppyPath->text(), QString("%1ubninit").arg(targetPath));
-		}
-		if (diskimagetypeselect->currentIndex() == diskimagetypeselect->findText(tr("ISO")))
-		{
-			if (!FloppyPath->text().startsWith("http://") && !FloppyPath->text().startsWith("ftp://"))
-				extractiso(FloppyPath->text());
-			else
+			if (QFile::exists(QString("%1ubnboot").arg(targetPath)))
 			{
-				downloadfile(FloppyPath->text(), isotmpf);
-				extractiso(isotmpf);
-			}
-			if (QFile::exists(QString("%1sevnz.exe").arg(ubntmpf)))
-			{
-				rmFile(QString("%1sevnz.exe").arg(ubntmpf));
-			}
-			if (QFile::exists(QString("%1\\7z.dll").arg(ubntmpf)))
-			{
-				rmFile(QString("%1\\7z.dll").arg(ubntmpf));
+				overwritefileprompt(QString("%1ubnboot").arg(targetPath));
 			}
 		}
 	}
@@ -4276,14 +2784,7 @@ void unetbootin::fininstall()
 		rmFile(mke2fscommand);
 #endif
 	}
-	pdesc1->setText("");
-	progresslayer->setEnabled(false);
-	progresslayer->hide();
-	rebootlayer->setEnabled(true);
-	rebootlayer->show();
-	sdesc3->setText(QString(sdesc3->text()).remove("<b>").replace(trcurrent+"</b>", trdone));
-	sdesc4->setText(QString("<b>%1 %2</b>").arg(sdesc4->text()).arg(trcurrent));
-	if (installType == tr("Hard Disk"))
+	
 	{
 		rebootmsgtext->setText(tr("After rebooting, select the " UNETBOOTINB" menu entry to boot.%1").arg(postinstmsg));
 	}
